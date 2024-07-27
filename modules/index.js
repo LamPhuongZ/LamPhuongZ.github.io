@@ -33,36 +33,49 @@ const createElements = () => {
   const cardInfo = document.createElement("div");
   cardInfo.classList.add("card-info");
 
-  // Create p1 tag
-  const pTitle = document.createElement("p");
-  pTitle.textContent = "Word Title: ";
+  // Create div tag, class word
+  const word = document.createElement("div");
+  word.classList.add("word");
 
-  // Create span1 tag
-  const cardWordTitle = document.createElement("span");
+  // Create p tag
+  const cardWordTitle = document.createElement("p");
   cardWordTitle.classList.add("card-wordTitle");
-  cardWordTitle.textContent = "____";
 
-  cardInfo.appendChild(pTitle);
-  pTitle.appendChild(cardWordTitle);
+  // Create button tag
+  const buttonVolume = document.createElement("button");
+  buttonVolume.classList.add("btn-volume");
 
-  // Create p2 tag
-  const pMean = document.createElement("p");
-  pMean.textContent = "Meaning: ";
+  // Create i tag
+  const iconVolume = document.createElement("i");
+  iconVolume.classList.add("fas", "fa-volume-up");
+  iconVolume.title = "sound";
 
-  // Create span2 tag
-  const cardWordMean = document.createElement("span");
-  cardWordMean.classList.add("card-wordMean");
-  cardWordMean.textContent = "____";
+  buttonVolume.appendChild(iconVolume);
+  word.appendChild(cardWordTitle);
+  word.appendChild(buttonVolume);
 
-  cardInfo.appendChild(pMean);
-  pMean.appendChild(cardWordMean);
+  const details = document.createElement("div");
+  details.classList.add("details");
 
-  // Create audio tag
-  const audio = document.createElement("audio");
-  audio.id = "audio";
-  audio.controls = true;
+  const p1 = document.createElement("p");
+  p1.classList.add("partOfSpeech");
 
-  cardInfo.appendChild(audio);
+  const p2 = document.createElement("p");
+  p2.classList.add("phonetic-text");
+
+  details.appendChild(p1);
+  details.appendChild(p2);
+
+  const wordMeaning = document.createElement("p");
+  wordMeaning.classList.add("word-meaning");
+
+  const wordExample = document.createElement("p");
+  wordExample.classList.add("word-example");
+
+  cardInfo.appendChild(word);
+  cardInfo.appendChild(details);
+  cardInfo.appendChild(wordMeaning);
+  cardInfo.appendChild(wordExample);
 
   wrapper.appendChild(card);
   card.appendChild(h1);
@@ -92,31 +105,39 @@ const displayElement = (result, keyWord) => {
   const infoTextEl = document.querySelector(".card-typeWord");
   const cardInfo = document.querySelector(".card-info");
   const titleEl = document.querySelector(".card-wordTitle");
-  const cardWordMean = document.querySelector(".card-wordMean");
-  const audioEl = document.querySelector("audio");
+  const partOfSpeechEl = document.querySelector(".partOfSpeech");
+  const phoneticTextEl = document.querySelector(".phonetic-text");
+  const wordMeaning = document.querySelector(".word-meaning");
+  const wordExample = document.querySelector(".word-example");
+  const buttonVolume = document.querySelector(".btn-volume");
 
   infoTextEl.style.display = "block";
   cardInfo.style.display = "none";
-  
+
   if (result.title) {
     cardInfo.style.display = "block";
     infoTextEl.style.display = "none";
     titleEl.textContent = keyWord;
-    cardWordMean.textContent = "N/A";
-    audioEl.style.display = "none";
+    partOfSpeechEl.textContent = "";
+    wordMeaning.textContent = "N/A";
+    wordExample.textContent = "N/A";
+    wordExample.textContent = "N/A";
   } else {
     infoTextEl.style.display = "none";
     cardInfo.style.display = "block";
-    audioEl.style.display = "inline-flex";
     titleEl.textContent = result[0].word;
-    cardWordMean.textContent = result[0].meanings[0].definitions[0].definition;
+    partOfSpeechEl.textContent = result[0].meanings[0].partOfSpeech;
+    phoneticTextEl.textContent = result[0].phonetic || `/undefined/`;
+    wordMeaning.textContent = result[0].meanings[0].definitions[0].definition;
+    wordExample.textContent = result[0].meanings[0].definitions[0].example;
 
-    const audioSrc = getAudioSrc(result[0].phonetics);
-    if (audioSrc) {
-      audioEl.src = audioSrc;
-    } else {
-      audioEl.style.display = "none";
-    }
+    buttonVolume.onclick = () => {
+      const audioSrc = getAudioSrc(result[0].phonetics);
+      if (audioSrc) {
+        const audio = new Audio(audioSrc);
+        audio.play();
+      }
+    };
   }
 };
 
